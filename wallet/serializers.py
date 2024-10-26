@@ -1,9 +1,10 @@
 from decimal import Decimal
-from rest_framework import serializers
-from .models import Wallet
+
 from django.utils.functional import lazy
 from django.db.models import F
+from rest_framework import serializers
 
+from .models import Wallet
 
 class WalletSerializer(serializers.ModelSerializer):
 
@@ -18,14 +19,14 @@ class WalletOperationsSerializer(serializers.Serializer):
         ('DEPOSIT', 'Deposit'),
         ('WITHDRAW', 'Withdraw'),
     )
-    operation_type = serializers.ChoiceField(OPERATION_CHOICE)
+    operationType = serializers.ChoiceField(OPERATION_CHOICE)
     amount = serializers.DecimalField(
         max_digits=10, decimal_places=2, min_value=Decimal('0.01'))
 
     def validate(self, attrs):
         wallet: Wallet = self.context['wallet']
 
-        if attrs['operation_type'] == 'WITHDRAW' and wallet.balance < attrs['amount']:
+        if attrs['operationType'] == 'WITHDRAW' and wallet.balance < attrs['amount']:
             raise serializers.ValidationError(
                 'Не достаточно средств для выполнения операции')
 
